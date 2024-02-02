@@ -29,10 +29,15 @@ fn main() -> Result<(), Box<(dyn Error)>> {
 
     Tui::enter()?;
 
+    
     while !app.should_quit {
-        draw(&mut app, &mut tui.terminal)?;
+        
         if let Ok(event) = tui.events.next() {
             match event {
+                events::Event::Tick=> {draw(&mut app, &mut tui.terminal)?},
+                events::Event::IncreaseTime=>{
+                    app.increase_elapsed_time();
+                }
                 events::Event::Key(key) =>{
                     match key {
                         Input {
@@ -56,7 +61,7 @@ fn main() -> Result<(), Box<(dyn Error)>> {
                             app.clear_current_input();
                             continue
                         },
-                        Input { key: Key::Esc, .. } => break,
+                        Input { key: Key::Esc, .. } => app.quit(),
                         input => {
                             app.textarea.input(input);
                         }
@@ -66,6 +71,6 @@ fn main() -> Result<(), Box<(dyn Error)>> {
         }  
     }
     Tui::reset()?;
-    
+
     Ok(())
 }

@@ -9,13 +9,19 @@ const DATA: &'static str = include_str!("br_utf8.txt");
 pub struct App<'a>{
     pub correct_words: u16,
     pub incorrect_words: u16,
+    pub elapsed_seconds: u16,
     pub index: usize,
     pub should_quit: bool,
     pub textarea: TextArea<'a>,
     words: Vec<&'a str>,
 }
 
-impl<'a> App<'a> {
+impl<'a> App<'a> { 
+
+    pub fn quit(&mut self){
+        self.should_quit = true;
+    }
+
     pub fn get_user_input(&self) -> String{
         self.textarea.lines().first().unwrap().to_string()
     }
@@ -63,7 +69,7 @@ impl<'a> App<'a> {
         words
     }
     pub fn new()->Self{
-        Self { correct_words: 0, incorrect_words: 0, index: 0 , textarea: TextArea::default(),  words: App::get_words(), should_quit: false }
+        Self { correct_words: 0, incorrect_words: 0, index: 0 , elapsed_seconds: 0,textarea: TextArea::default(),  words: App::get_words(), should_quit: false }
     }
 
     pub fn increase_correct_words(&mut self){
@@ -77,6 +83,12 @@ impl<'a> App<'a> {
             self.incorrect_words=res;
         }
         self.index+=1;
+    }
+
+    pub fn increase_elapsed_time(&mut self){
+        if let Some(res) = self.elapsed_seconds.checked_add(1){
+            self.elapsed_seconds = res;
+        }
     }
 
     pub fn clear_current_input(&mut self){
