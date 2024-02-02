@@ -70,7 +70,7 @@ impl<'a> App<'a> {
         words
     }
     pub fn new()->Self{
-        Self { correct_words: 0, incorrect_words: 0, index: 0 , elapsed_seconds: 1, summary: None, textarea: TextArea::default(),  words: App::get_words(), should_quit: false }
+        Self { correct_words: 0, incorrect_words: 0, index: 0 , elapsed_seconds: 0, summary: None, textarea: TextArea::default(),  words: App::get_words(), should_quit: false }
     }
 
     pub fn increase_correct_words(&mut self){
