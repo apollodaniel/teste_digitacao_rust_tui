@@ -100,9 +100,9 @@ impl<'a> App<'a> {
         self.quit();
         
         let words_per_minute = (60.0/self.elapsed_seconds as f32)*(self.correct_words+self.incorrect_words)as f32;
-
-        let correct_words_percentage = (self.correct_words as f32 / (self.correct_words+self.incorrect_words) as f32) * 100.0;
-        let incorrect_words_percentage = (self.incorrect_words as f32 / (self.correct_words+self.incorrect_words) as f32) * 100.0;
+        
+        let correct_words_percentage = if self.correct_words != 0 {(self.correct_words as f32 / (self.correct_words+self.incorrect_words) as f32) * 100.0} else{0.0} ;
+        let incorrect_words_percentage = if self.incorrect_words != 0 { (self.incorrect_words as f32 / (self.correct_words+self.incorrect_words) as f32) * 100.0} else{0.0};
 
         self.summary = Some(format!("Sumário:\n\nTempo decorrido: {}s\nCorretas: {}\nIncorretas: {}\n\n{} palavras por minuto!\n{:.2}% correto\t{:.2}% incorreto",
             self.elapsed_seconds,
