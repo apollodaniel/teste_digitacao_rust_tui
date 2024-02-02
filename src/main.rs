@@ -1,26 +1,16 @@
 use std::{
-    error::Error, io::{stderr, stdout, Write}, rc::Rc
+    error::Error, io::stderr
 };
 
 use app::App;
-use crossterm::{
-    event::{self, Event, KeyCode},
-    execute,
-    terminal::{self, EnterAlternateScreen, LeaveAlternateScreen},
-};
 use events::EventHandler;
 use ratatui::{
     backend::CrosstermBackend,
-    layout::{Constraint, Layout, Rect},
-    style::Stylize,
-    text::{self, Line, Span},
-    widgets::{canvas::Rectangle, Block, Borders, Padding, Paragraph, Wrap},
     Terminal,
 };
 
-use rand::{rngs::OsRng, seq::SliceRandom};
-use tui::{CrosstermTerminal, Tui};
-use tui_textarea::{Input, Key, TextArea};
+use tui::Tui;
+use tui_textarea::{Input, Key};
 use ui::draw;
 
 
@@ -28,8 +18,6 @@ pub mod app;
 pub mod tui;
 pub mod events;
 pub mod ui;
-
-
 
 
 fn main() -> Result<(), Box<(dyn Error)>> {
@@ -45,7 +33,6 @@ fn main() -> Result<(), Box<(dyn Error)>> {
         draw(&mut app, &mut tui.terminal)?;
         if let Ok(event) = tui.events.next() {
             match event {
-                events::Event::Tick=>{}
                 events::Event::Key(key) =>{
                     match key {
                         Input {
@@ -79,7 +66,6 @@ fn main() -> Result<(), Box<(dyn Error)>> {
         }  
     }
     Tui::reset()?;
-
-
+    
     Ok(())
 }

@@ -1,18 +1,16 @@
-use std::{sync::mpsc::{channel, Receiver, Sender}, thread::{self, JoinHandle}, time::Duration};
+use std::{sync::mpsc::{channel, Receiver, Sender}, thread::{self, JoinHandle}};
 
 use crossterm::event;
 use tui_textarea::Input;
 
 pub enum Event{
-    Tick,
     Key(Input)
 }
 
 #[derive(Debug)]
 pub struct EventHandler{
-    sender: Sender<Event>,
     receiver: Receiver<Event>,
-    handler: JoinHandle<()>    
+    pub handler: JoinHandle<()>    
 }
 
 impl EventHandler {
@@ -28,18 +26,16 @@ impl EventHandler {
                     if let Ok(event) = event::read() {
                         match event {
                            event::Event::Key(e) => {
-                                sender.send(Event::Key(e.into()));
+                                sender.send(Event::Key(e.into())).expect("Error sending key");
                            },
-                           _=>{
-                                sender.send(Event::Tick);
-                           } 
+                           _=>{} 
                         }
                     }
                 }
             })
         };
 
-        Self { sender: sender, receiver: receiver, handler: handler }
+        Self {receiver: receiver, handler: handler }
     }
 
     pub fn next(&self)->Result<Event, std::sync::mpsc::RecvError>{
