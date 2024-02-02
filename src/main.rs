@@ -55,15 +55,31 @@ fn main() -> Result<(), Box<(dyn Error)>> {
 
     
 
-    let layout = Layout::new(
+    let vertical_layout = Layout::new(
         ratatui::layout::Direction::Vertical,
-        [Constraint::Min(1), Constraint::Length(3)],
+        [
+            Constraint::Min(1),
+            Constraint::Length(4),
+            Constraint::Length(3)
+        ],
     )
     .split(terminal.size()?);
+
+    let counter_layout = Layout::new(
+        ratatui::layout::Direction::Horizontal,
+        [
+            Constraint::Percentage(50),
+            Constraint::Percentage(50),
+        ]
+    ).split(vertical_layout[1]);
+
 
     let words = get_words();
     let mut index: usize = 0;
 
+
+    let mut correct_word = 0;
+    let mut incorrect_word = 0;
 
     loop {
         terminal.draw(|f| {
@@ -72,9 +88,15 @@ fn main() -> Result<(), Box<(dyn Error)>> {
             .borders(Borders::ALL)
             .border_type(ratatui::widgets::BorderType::Thick);
 
+            // render preview
+            f.render_widget(Paragraph::new(vec![get_actual_words(index, &words).into()]).wrap(Wrap{trim:true}).block(paragraph_block), vertical_layout[0]);
+            
+            // render word counter
+            f.render_widget(Paragraph::new(format!("{} correct",correct_word)), counter_layout[0]); // correct
+            f.render_widget(Paragraph::new(format!("{} incorrect",incorrect_word)), counter_layout[1]); // incorrect
 
-            f.render_widget(Paragraph::new(vec![get_actual_words(index, &words).into()]).wrap(Wrap{trim:true}).block(paragraph_block), layout[0]);
-            f.render_widget(textarea.widget(), layout[1]);
+            // render text field
+            f.render_widget(textarea.widget(), vertical_layout[2]);
         })?;
 
         match crossterm::event::read()?.into() {
@@ -91,6 +113,11 @@ fn main() -> Result<(), Box<(dyn Error)>> {
                 key: Key::Char(' '),
                 ..
             } => {
+                if textarea.lines().first().unwrap().eq(words[index]){
+                    correct_word += 1;
+                }else{
+                    incorrect_word += 1;
+                }
                 index+=1;
                 textarea.delete_line_by_head();
                 continue
