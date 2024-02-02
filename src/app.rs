@@ -1,5 +1,5 @@
 use rand::{rngs::OsRng, seq::SliceRandom};
-use ratatui::{style::Stylize, text::Span};
+use ratatui::{style::Stylize, text::{Line, Span}};
 use tui_textarea::TextArea;
 
 const DATA: &'static str = include_str!("br_utf8.txt");
@@ -23,26 +23,39 @@ impl<'a> App<'a> {
     pub fn get_current_word(&self ) -> String{
         self.words[self.index].to_string()
     }
-    
-    pub fn get_actual_words(&self)->Vec<Span>{
-        let max_displaying_words = 50;
-        self.words[self.index..max_displaying_words+self.index]
-        .into_iter()
-        .map(|f| {
-            let span = Span::raw(format!("{} ", f));
-            if f.eq(&self.words[self.index]){
-                if self.get_user_input().eq(""){
-                    span.bold()
-                }else if f.starts_with(self.get_user_input().as_str()) {
-                    span.bold().green()
+
+    pub fn matched_text_colorizer(&self)->Vec<Span>{
+        let current_word = self.get_current_word();
+        let input = self.get_user_input();
+
+        let mut result: Vec<Span> = Vec::new();
+
+        for (index, letter) in current_word.chars().enumerate(){
+            if let Some(res) = input.chars().nth(index){
+                if letter.eq(&res){
+                    result.push(Span::raw(letter.to_string()).bold().green());
                 }else{
-                    span.bold().red()
+                    result.push(Span::raw(letter.to_string()).bold().red());
                 }
             }else{
-                span
-            }        
-        })
-        .collect()
+                result.push(Span::raw(letter.to_string()).bold());
+            }
+        }
+        result.push(Span::raw(" "));
+        result
+    }
+
+    pub fn get_actual_words(&self)->Line{
+        let max_displaying_words = 50;
+
+        let mut words_span: Vec<Span> = Vec::new();
+        words_span.append(&mut self.matched_text_colorizer());
+        words_span.append(&mut self.words[self.index+1..max_displaying_words+self.index]
+            .iter()
+            .map(|f|Span::raw(format!("{} ", f)))
+            .collect::<Vec<Span>>());
+
+        words_span.into()
     }
     fn get_words() -> Vec<&'static str> {
         let mut words: Vec<&str> = DATA.split("\n").map(|f| f.trim()).collect();
