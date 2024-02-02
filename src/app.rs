@@ -99,7 +99,7 @@ impl<'a> App<'a> {
     pub fn get_summary(&mut self){
         self.quit();
         
-        let words_per_minute = (60/self.elapsed_seconds)*(self.correct_words+self.incorrect_words);
+        let words_per_minute = (60.0/self.elapsed_seconds as f32)*(self.correct_words+self.incorrect_words)as f32;
 
         let correct_words_percentage = (self.correct_words as f32 / (self.correct_words+self.incorrect_words) as f32) * 100.0;
         let incorrect_words_percentage = (self.incorrect_words as f32 / (self.correct_words+self.incorrect_words) as f32) * 100.0;
@@ -108,7 +108,7 @@ impl<'a> App<'a> {
             self.elapsed_seconds,
             self.correct_words,
             self.incorrect_words,
-            words_per_minute,
+            words_per_minute.round(),
             correct_words_percentage,
             incorrect_words_percentage
         ));                
