@@ -46,9 +46,9 @@ pub fn draw(app: &mut App, terminal: &mut CrosstermTerminal)->Result<(), Box<(dy
         f.render_widget(Paragraph::new(vec![app.get_actual_words().into()]).wrap(Wrap{trim:true}).block(paragraph_block), vertical_layout[0]);
         
         // render word counter
-        f.render_widget(Paragraph::new(format!("Elapsed time: {}",app.elapsed_seconds)).alignment(ratatui::layout::Alignment::Center), counter_layout[0]); // incorrect
-        f.render_widget(Paragraph::new(format!("{} correct",app.correct_words)).alignment(ratatui::layout::Alignment::Center), counter_layout[1]); // correct
-        f.render_widget(Paragraph::new(format!("{} incorrect",app.incorrect_words)).alignment(ratatui::layout::Alignment::Center), counter_layout[2]); // incorrect
+        f.render_widget(Paragraph::new(format!("Tempo decorrido: {}s",app.elapsed_seconds)).alignment(ratatui::layout::Alignment::Center), counter_layout[0]); // incorrect
+        f.render_widget(Paragraph::new(format!("{} corretas",app.correct_words)).alignment(ratatui::layout::Alignment::Center), counter_layout[1]); // correct
+        f.render_widget(Paragraph::new(format!("{} incorretas",app.incorrect_words)).alignment(ratatui::layout::Alignment::Center), counter_layout[2]); // incorrect
 
         // render text field
         f.render_widget(app.textarea.widget(), vertical_layout[2]);
