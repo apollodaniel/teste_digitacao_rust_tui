@@ -59,7 +59,7 @@ fn main() -> Result<(), Box<(dyn Error)>> {
         ratatui::layout::Direction::Vertical,
         [
             Constraint::Min(1),
-            Constraint::Length(4),
+            Constraint::Length(1),
             Constraint::Length(3)
         ],
     )
@@ -92,8 +92,8 @@ fn main() -> Result<(), Box<(dyn Error)>> {
             f.render_widget(Paragraph::new(vec![get_actual_words(index, &words).into()]).wrap(Wrap{trim:true}).block(paragraph_block), vertical_layout[0]);
             
             // render word counter
-            f.render_widget(Paragraph::new(format!("{} correct",correct_word)), counter_layout[0]); // correct
-            f.render_widget(Paragraph::new(format!("{} incorrect",incorrect_word)), counter_layout[1]); // incorrect
+            f.render_widget(Paragraph::new(format!("{} correct",correct_word)).alignment(ratatui::layout::Alignment::Center), counter_layout[0]); // correct
+            f.render_widget(Paragraph::new(format!("{} incorrect",incorrect_word)).alignment(ratatui::layout::Alignment::Center), counter_layout[1]); // incorrect
 
             // render text field
             f.render_widget(textarea.widget(), vertical_layout[2]);
