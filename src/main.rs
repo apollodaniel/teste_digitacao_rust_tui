@@ -48,7 +48,7 @@ fn main() -> Result<(), Box<(dyn Error)>> {
                         }
                         | Input {
                             key: Key::Enter, ..
-                        } => continue,
+                        } => app.get_summary(),
                         Input {
                             key: Key::Char(' '),
                             ..
@@ -71,6 +71,10 @@ fn main() -> Result<(), Box<(dyn Error)>> {
         }  
     }
     Tui::reset()?;
+
+    if let Some(summary) = app.summary {
+        println!("{}",summary);
+    }
 
     Ok(())
 }

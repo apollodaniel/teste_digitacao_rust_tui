@@ -12,6 +12,7 @@ pub struct App<'a>{
     pub elapsed_seconds: u16,
     pub index: usize,
     pub should_quit: bool,
+    pub summary: Option<String>, // 0 means user exited, 1 means user finished test and got summary
     pub textarea: TextArea<'a>,
     words: Vec<&'a str>,
 }
@@ -69,7 +70,7 @@ impl<'a> App<'a> {
         words
     }
     pub fn new()->Self{
-        Self { correct_words: 0, incorrect_words: 0, index: 0 , elapsed_seconds: 0,textarea: TextArea::default(),  words: App::get_words(), should_quit: false }
+        Self { correct_words: 0, incorrect_words: 0, index: 0 , elapsed_seconds: 1, summary: None, textarea: TextArea::default(),  words: App::get_words(), should_quit: false }
     }
 
     pub fn increase_correct_words(&mut self){
@@ -93,5 +94,24 @@ impl<'a> App<'a> {
 
     pub fn clear_current_input(&mut self){
         self.textarea.delete_line_by_head();
+    }
+
+    pub fn get_summary(&mut self){
+        self.quit();
+        
+        let words_per_minute = (60/self.elapsed_seconds)*(self.correct_words+self.incorrect_words);
+
+        let correct_words_percentage = (self.correct_words as f32 / (self.correct_words+self.incorrect_words) as f32) * 100.0;
+        let incorrect_words_percentage = (self.incorrect_words as f32 / (self.correct_words+self.incorrect_words) as f32) * 100.0;
+
+        self.summary = Some(format!("Summary:\n\nElapsed time: {}s\nCorrect words: {}\tIncorrect words: {}\n\n{} words per minute!\n{:.2}% correct\t{:.2}% incorrect",
+            self.elapsed_seconds,
+            self.correct_words,
+            self.incorrect_words,
+            words_per_minute,
+            correct_words_percentage,
+            incorrect_words_percentage
+        ));                
+
     }
 }
