@@ -26,16 +26,23 @@ fn get_words() -> Vec<&'static str> {
     words
 }
 
-fn get_actual_words<'a>(index: usize, words: &'a Vec<&'a str>)->Vec<Span>{
+fn get_actual_words<'a>(index: usize, words: &'a Vec<&'a str>, user_input: String)->Vec<Span>{
     let max_displaying_words = 50;
     words[index..max_displaying_words+index]
     .into_iter()
     .map(|f| {
+        let span = Span::raw(format!("{} ", f));
         if f.eq(&words[index]){
-            Span::raw(format!("{} ", f)).bold()
+            if user_input.eq(""){
+                span.bold()
+            }else if f.starts_with(user_input.as_str()) {
+                span.bold().green()
+            }else{
+                span.bold().red()
+            }
         }else{
-            Span::raw(format!("{} ", f))
-        }
+            span
+        }        
     })
     .collect()
 }
@@ -89,7 +96,7 @@ fn main() -> Result<(), Box<(dyn Error)>> {
             .border_type(ratatui::widgets::BorderType::Thick);
 
             // render preview
-            f.render_widget(Paragraph::new(vec![get_actual_words(index, &words).into()]).wrap(Wrap{trim:true}).block(paragraph_block), vertical_layout[0]);
+            f.render_widget(Paragraph::new(vec![get_actual_words(index, &words, textarea.lines().first().unwrap().clone()).into()]).wrap(Wrap{trim:true}).block(paragraph_block), vertical_layout[0]);
             
             // render word counter
             f.render_widget(Paragraph::new(format!("{} correct",correct_word)).alignment(ratatui::layout::Alignment::Center), counter_layout[0]); // correct
